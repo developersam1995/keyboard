@@ -16,6 +16,41 @@
                 },
                 "rules": [
                     {
+                        "description": "Cmd + p goland error",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "command-p",
+                                        "type": "frontmost_application_if",
+                                        "bundle_identifiers": [
+                                            "^com\\.jetbrains\\.goland$"
+                                        ]
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "p",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "left_command"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "p",
+                                        "modifiers": {
+                                            "mandatory":[
+                                                "left_command"
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "Caps Lock to Escape on single press, Control on press and hold.",
                         "manipulators": [
                             {
@@ -130,28 +165,13 @@
                                         }
                                     ],
                                     "simultaneous_options": {
-                                        "key_down_order": "strict",
-                                        "key_up_order": "strict_inverse",
-                                        "to_after_key_up": [
-                                            {
-                                                "set_variable": {
-                                                    "name": "launcher_mode_colon",
-                                                    "value": 0
-                                                }
-                                            }
-                                        ]
+                                        "key_down_order": "strict"
                                     }
                                 },
                                 "parameters": {
                                     "basic.simultaneous_threshold_milliseconds": 500
                                 },
                                 "to": [
-                                    {
-                                        "set_variable": {
-                                            "name": "launcher_mode_colon",
-                                            "value": 1
-                                        }
-                                    },
                                     {
                                         "shell_command": "open -a 'iTerm'"
                                     }
@@ -172,28 +192,13 @@
                                         }
                                     ],
                                     "simultaneous_options": {
-                                        "key_down_order": "strict",
-                                        "key_up_order": "strict_inverse",
-                                        "to_after_key_up": [
-                                            {
-                                                "set_variable": {
-                                                    "name": "launcher_mode_colon",
-                                                    "value": 0
-                                                }
-                                            }
-                                        ]
+                                        "key_down_order": "strict"
                                     }
                                 },
                                 "parameters": {
                                     "basic.simultaneous_threshold_milliseconds": 500
                                 },
                                 "to": [
-                                    {
-                                        "set_variable": {
-                                            "name": "launcher_mode_colon",
-                                            "value": 1
-                                        }
-                                    },
                                     {
                                         "shell_command": "open -a 'zoom.us'"
                                     }
@@ -214,28 +219,13 @@
                                         }
                                     ],
                                     "simultaneous_options": {
-                                        "key_down_order": "strict",
-                                        "key_up_order": "strict_inverse",
-                                        "to_after_key_up": [
-                                            {
-                                                "set_variable": {
-                                                    "name": "launcher_mode_colon",
-                                                    "value": 0
-                                                }
-                                            }
-                                        ]
+                                        "key_down_order": "strict"
                                     }
                                 },
                                 "parameters": {
                                     "basic.simultaneous_threshold_milliseconds": 500
                                 },
                                 "to": [
-                                    {
-                                        "set_variable": {
-                                            "name": "launcher_mode_colon",
-                                            "value": 1
-                                        }
-                                    },
                                     {
                                         "shell_command": "open -a 'slack'"
                                     }
@@ -252,32 +242,17 @@
                                             "key_code": "semicolon"
                                         },
                                         {
-                                            "key_code": "f"
+                                            "key_code": "b"
                                         }
                                     ],
                                     "simultaneous_options": {
-                                        "key_down_order": "strict",
-                                        "key_up_order": "strict_inverse",
-                                        "to_after_key_up": [
-                                            {
-                                                "set_variable": {
-                                                    "name": "launcher_mode_colon",
-                                                    "value": 0
-                                                }
-                                            }
-                                        ]
+                                        "key_down_order": "strict"
                                     }
                                 },
                                 "parameters": {
                                     "basic.simultaneous_threshold_milliseconds": 500
                                 },
                                 "to": [
-                                    {
-                                        "set_variable": {
-                                            "name": "launcher_mode_colon",
-                                            "value": 1
-                                        }
-                                    },
                                     {
                                         "shell_command": "open -a 'safari'"
                                     }
@@ -298,28 +273,13 @@
                                         }
                                     ],
                                     "simultaneous_options": {
-                                        "key_down_order": "strict",
-                                        "key_up_order": "strict_inverse",
-                                        "to_after_key_up": [
-                                            {
-                                                "set_variable": {
-                                                    "name": "launcher_mode_colon",
-                                                    "value": 0
-                                                }
-                                            }
-                                        ]
+                                        "key_down_order": "strict"
                                     }
                                 },
                                 "parameters": {
                                     "basic.simultaneous_threshold_milliseconds": 500
                                 },
                                 "to": [
-                                    {
-                                        "set_variable": {
-                                            "name": "launcher_mode_colon",
-                                            "value": 1
-                                        }
-                                    },
                                     {
                                         "shell_command": "open -a 'visual studio code'"
                                     }
@@ -340,28 +300,13 @@
                                         }
                                     ],
                                     "simultaneous_options": {
-                                        "key_down_order": "strict",
-                                        "key_up_order": "strict_inverse",
-                                        "to_after_key_up": [
-                                            {
-                                                "set_variable": {
-                                                    "name": "launcher_mode_colon",
-                                                    "value": 0
-                                                }
-                                            }
-                                        ]
+                                        "key_down_order": "strict"
                                     }
                                 },
                                 "parameters": {
                                     "basic.simultaneous_threshold_milliseconds": 500
                                 },
                                 "to": [
-                                    {
-                                        "set_variable": {
-                                            "name": "launcher_mode_colon",
-                                            "value": 1
-                                        }
-                                    },
                                     {
                                         "shell_command": "open -a 'goland'"
                                     }
@@ -382,16 +327,7 @@
                                         }
                                     ],
                                     "simultaneous_options": {
-                                        "key_down_order": "strict",
-                                        "key_up_order": "strict_inverse",
-                                        "to_after_key_up": [
-                                            {
-                                                "set_variable": {
-                                                    "name": "launcher_mode_colon",
-                                                    "value": 0
-                                                }
-                                            }
-                                        ]
+                                        "key_down_order": "strict"
                                     }
                                 },
                                 "parameters": {
@@ -399,13 +335,61 @@
                                 },
                                 "to": [
                                     {
-                                        "set_variable": {
-                                            "name": "launcher_mode_colon",
-                                            "value": 1
-                                        }
-                                    },
-                                    {
                                         "shell_command": "open -a 'Skype'"
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "modifiers": {
+                                        "mandatory": []
+                                    },
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "semicolon"
+                                        },
+                                        {
+                                            "key_code": "a"
+                                        }
+                                    ],
+                                    "simultaneous_options": {
+                                        "key_down_order": "strict"
+                                    }
+                                },
+                                "parameters": {
+                                    "basic.simultaneous_threshold_milliseconds": 500
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -a 'Authy Desktop'"
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "modifiers": {
+                                        "mandatory": []
+                                    },
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "semicolon"
+                                        },
+                                        {
+                                            "key_code": "p"
+                                        }
+                                    ],
+                                    "simultaneous_options": {
+                                        "key_down_order": "strict"
+                                    }
+                                },
+                                "parameters": {
+                                    "basic.simultaneous_threshold_milliseconds": 500
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -a 'Postman'"
                                     }
                                 ],
                                 "type": "basic"
@@ -482,16 +466,50 @@
                         ]
                     },
                     {
-                        "description": "K+L -> hyper",
+                        "description": "l+; -> hyper",
                         "manipulators": [
                             {
                                 "from": {
                                     "simultaneous": [
                                         {
-                                            "key_code": "k"
+                                            "key_code": "l"
                                         },
                                         {
-                                            "key_code": "l"
+                                            "key_code": "semicolon"
+                                        }
+                                    ],
+                                    "simultaneous_options": {
+                                        "detect_key_down_uninterruptedly": true,
+                                        "key_down_order": "insensitive",
+                                        "key_up_order": "insensitive",
+                                        "key_up_when": "any"
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "left_shift",
+                                        "modifiers": [
+                                            "left_command",
+                                            "left_control",
+                                            "left_option"
+                                        ]
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "a+s -> hyper",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "a"
+                                        },
+                                        {
+                                            "key_code": "s"
                                         }
                                     ],
                                     "simultaneous_options": {
@@ -876,6 +894,158 @@
                                 "type": "basic"
                             }
                         ]
+                    },
+                    {
+                        "description": "l+k -> bookmark mode",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "k"
+                                        },
+                                        {
+                                            "key_code": "l"
+                                        }
+                                    ],
+                                    "simultaneous_options": {
+                                        "detect_key_down_uninterruptedly": true,
+                                        "key_down_order": "insensitive",
+                                        "key_up_order": "insensitive",
+                                        "key_up_when": "any",
+                                        "to_after_key_up": [
+                                            {
+                                                "set_variable": {
+                                                    "name": "bookmark-mode",
+                                                    "value": 0
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "set_variable": {
+                                            "name": "bookmark-mode",
+                                            "value": 1
+                                        }
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "bookmark google",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "bookmark-mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "g",
+                                    "modifiers": {
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "osascript /Users/samrudhkumar/Projects/keyboard/keyboard/applescripts/googleTab.applescript"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "bookmark source.golabs gowork",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "bookmark-mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "s",
+                                    "modifiers": {
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "osascript /Users/samrudhkumar/Projects/keyboard/keyboard/applescripts/golabs.applescript"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "bookmark source.golabs pp",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "bookmark-mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "r",
+                                    "modifiers": {
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "osascript /Users/samrudhkumar/Projects/keyboard/keyboard/applescripts/pp.applescript"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "bookmark test",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "bookmark-mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "t",
+                                    "modifiers": {
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "osascript /Users/samrudhkumar/Projects/keyboard/keyboard/applescripts/test.applescript"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
                     }
                 ]
             },
@@ -1079,6 +1249,152 @@
                 "country_code": 0,
                 "indicate_sticky_modifier_keys_state": true,
                 "keyboard_type": "ansi",
+                "mouse_key_xy_scale": 100
+            }
+        },
+        {
+            "complex_modifications": {
+                "parameters": {
+                    "basic.simultaneous_threshold_milliseconds": 50,
+                    "basic.to_delayed_action_delay_milliseconds": 500,
+                    "basic.to_if_alone_timeout_milliseconds": 1000,
+                    "basic.to_if_held_down_threshold_milliseconds": 500,
+                    "mouse_motion_to_scroll.speed": 100
+                },
+                "rules": []
+            },
+            "devices": [],
+            "fn_function_keys": [
+                {
+                    "from": {
+                        "key_code": "f1"
+                    },
+                    "to": [
+                        {
+                            "consumer_key_code": "display_brightness_decrement"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "key_code": "f2"
+                    },
+                    "to": [
+                        {
+                            "consumer_key_code": "display_brightness_increment"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "key_code": "f3"
+                    },
+                    "to": [
+                        {
+                            "apple_vendor_keyboard_key_code": "mission_control"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "key_code": "f4"
+                    },
+                    "to": [
+                        {
+                            "apple_vendor_keyboard_key_code": "spotlight"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "key_code": "f5"
+                    },
+                    "to": [
+                        {
+                            "consumer_key_code": "dictation"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "key_code": "f6"
+                    },
+                    "to": [
+                        {
+                            "key_code": "f6"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "key_code": "f7"
+                    },
+                    "to": [
+                        {
+                            "consumer_key_code": "rewind"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "key_code": "f8"
+                    },
+                    "to": [
+                        {
+                            "consumer_key_code": "play_or_pause"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "key_code": "f9"
+                    },
+                    "to": [
+                        {
+                            "consumer_key_code": "fast_forward"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "key_code": "f10"
+                    },
+                    "to": [
+                        {
+                            "consumer_key_code": "mute"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "key_code": "f11"
+                    },
+                    "to": [
+                        {
+                            "consumer_key_code": "volume_decrement"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "key_code": "f12"
+                    },
+                    "to": [
+                        {
+                            "consumer_key_code": "volume_increment"
+                        }
+                    ]
+                }
+            ],
+            "name": "New profile",
+            "parameters": {
+                "delay_milliseconds_before_open_device": 1000
+            },
+            "selected": false,
+            "simple_modifications": [],
+            "virtual_hid_keyboard": {
+                "country_code": 0,
+                "indicate_sticky_modifier_keys_state": true,
                 "mouse_key_xy_scale": 100
             }
         }
