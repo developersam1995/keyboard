@@ -1162,7 +1162,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -g hammerspoon://windowModify?fn=centerWithFullHeight"
+                                        "shell_command": "open -g hammerspoon://changeLayout?layoutName=focus"
                                     }
                                 ],
                                 "type": "basic"
@@ -1328,7 +1328,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -g hammerspoon://stackWindow?bundleID=com.google.Chrome"
+                                        "shell_command": "open -g hammerspoon://cycleLayout"
                                     }
                                 ],
                                 "type": "basic"

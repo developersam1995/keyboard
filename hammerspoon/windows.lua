@@ -3,209 +3,63 @@ window = hs.getObjectMetatable("hs.window")
 
 local log = hs.logger.new('test.debugger', 'debug')
 
--- +-----------------+
--- |        |        |
--- |  HERE  |        |
--- |        |        |
--- +-----------------+
-function window.left(win)
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:frame()
+local layoutParams = require('keyboard.layout-params-defaults')
+local windowStack = {}
 
-  f.x = max.x
-  f.y = max.y
-  f.w = max.w / 2
-  f.h = max.h
-  win:setFrame(f)
-end
+local layouts = {
+  singleCenter = "single-center",
+  dualCenter = "dual-center",
+  focus = "focus"
+}
 
--- +-----------------+
--- |        |        |
--- |        |  HERE  |
--- |        |        |
--- +-----------------+
-function window.right(win)
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:frame()
-
-  f.x = max.x + (max.w / 2)
-  f.y = max.y
-  f.w = max.w / 2
-  f.h = max.h
-  win:setFrame(f)
-end
-
--- +-----------------+
--- |      HERE       |
--- +-----------------+
--- |                 |
--- +-----------------+
-function window.up(win)
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:frame()
-
-  f.x = max.x
-  f.w = max.w
-  f.y = max.y
-  f.h = max.h / 2
-  win:setFrame(f)
-end
-
--- +-----------------+
--- |                 |
--- +-----------------+
--- |      HERE       |
--- +-----------------+
-function window.down(win)
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:frame()
-
-  f.x = max.x
-  f.w = max.w
-  f.y = max.y + (max.h / 2)
-  f.h = max.h / 2
-  win:setFrame(f)
-end
-
--- +-----------------+
--- |  HERE  |        |
--- +--------+        |
--- |                 |
--- +-----------------+
-function window.upLeft(win)
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:fullFrame()
-
-  f.x = max.x
-  f.y = max.y
-  f.w = max.w / 2
-  f.h = max.h / 2
-  win:setFrame(f)
-end
-
--- +-----------------+
--- |                 |
--- +--------+        |
--- |  HERE  |        |
--- +-----------------+
-function window.downLeft(win)
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:fullFrame()
-
-  f.x = max.x
-  f.y = max.y + (max.h / 2)
-  f.w = max.w / 2
-  f.h = max.h / 2
-  win:setFrame(f)
-end
-
--- +-----------------+
--- |                 |
--- |        +--------|
--- |        |  HERE  |
--- +-----------------+
-function window.downRight(win)
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:fullFrame()
-
-  f.x = max.x + (max.w / 2)
-  f.y = max.y + (max.h / 2)
-  f.w = max.w / 2
-  f.h = max.h / 2
-
-  win:setFrame(f)
-end
-
--- +-----------------+
--- |        |  HERE  |
--- |        +--------|
--- |                 |
--- +-----------------+
-function window.upRight(win)
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:fullFrame()
-
-  f.x = max.x + (max.w / 2)
-  f.y = max.y
-  f.w = max.w / 2
-  f.h = max.h / 2
-  win:setFrame(f)
-end
-
--- +--------------+
--- |  |        |  |
--- |  |  HERE  |  |
--- |  |        |  |
--- +---------------+
-function window.centerWithFullHeight(win)
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:fullFrame()
-
-  f.x = max.x + (max.w * 5 / 18)
-  f.w = max.w * 4 / 9
-  f.y = max.y
-  f.h = max.h
-  win:setFrame(f)
-end
-
--- +-----------------+
--- |      |          |
--- | HERE |          |
--- |      |          |
--- +-----------------+
-function window.shiftLeft(win)
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:frame()
-
-  f.x = max.x
-  f.y = max.y
-  f.w = max.w * (5 / 18)
-  f.h = max.h
-  win:setFrame(f)
-end
-
--- +-----------------+
--- |      |          |
--- |      |   HERE   |
--- |      |          |
--- +-----------------+
-function window.shiftRight(win)
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:frame()
-
-  f.x = max.x + (max.w * 13 / 18)
-  f.y = max.y
-  f.w = max.w * (5 / 18)
-  f.h = max.h
-  win:setFrame(f)
-end
-
-function window.nextScreen(win)
-  local currentScreen = win:screen()
-  local allScreens = hs.screen.allScreens()
-  currentScreenIndex = hs.fnutils.indexOf(allScreens, currentScreen)
-  nextScreenIndex = currentScreenIndex + 1
-
-  if allScreens[nextScreenIndex] then
-    win:moveToScreen(allScreens[nextScreenIndex])
-  else
-    win:moveToScreen(allScreens[1])
-  end
-end
+local currentLayout = layouts.singleCenter
+local nextLayout = hs.fnutils.cycle({ layouts.dualCenter, layouts.singleCenter })
 
 local function isEmpty(s)
   return s == nil or s == ''
+end
+
+local function minNum(n1, n2)
+  if n1 < n2 then
+    return n1
+  end
+  return n2
+end
+
+local function singleCenterLayout(maxFrame, primaryWidthRatio)
+  local centerWidth = maxFrame.w * primaryWidthRatio
+  local secondaryWidth = maxFrame.w * ((1 - primaryWidthRatio) / 2)
+  local layout = {
+    primary = hs.geometry.rect(maxFrame.x + secondaryWidth, maxFrame.y, centerWidth, maxFrame.h),
+    s1 = hs.geometry.rect(maxFrame.x, maxFrame.y, secondaryWidth, maxFrame.h),
+    s2 = hs.geometry.rect(maxFrame.x + secondaryWidth + centerWidth, maxFrame.y, secondaryWidth, maxFrame.h),
+  }
+
+  return layout
+end
+
+local function dualCenterLayout(maxFrame, primaryWidthRatio)
+  local centerWidth = maxFrame.w * primaryWidthRatio
+  local secondaryWidth = maxFrame.w * ((1 - primaryWidthRatio) / 2)
+  local primaryHeight = maxFrame.h / 2
+  local layout = {
+    p1 = hs.geometry.rect(maxFrame.x + secondaryWidth, maxFrame.y, centerWidth, primaryHeight),
+    p2 = hs.geometry.rect(maxFrame.x + secondaryWidth, maxFrame.y + primaryHeight, centerWidth, primaryHeight),
+    s1 = hs.geometry.rect(maxFrame.x, maxFrame.y, secondaryWidth, maxFrame.h),
+    s2 = hs.geometry.rect(maxFrame.x + secondaryWidth + centerWidth, maxFrame.y, secondaryWidth, maxFrame.h),
+  }
+
+  return layout
+end
+
+local function focusLayout(maxFrame, maxWidth)
+  maxWidth = minNum(maxFrame.w, maxWidth)
+  local x = (maxFrame.w - maxWidth) / 2
+  local layout = {
+    p1 = hs.geometry.rect(maxFrame.x + x, maxFrame.y, maxWidth, maxFrame.h)
+  }
+
+  return layout
 end
 
 local function newStack(currentStack, top)
@@ -218,7 +72,7 @@ local function newStack(currentStack, top)
   local newIdx = 2
 
   for _, v in pairs(currentStack) do
-    if not done[v] and newIdx < 5 then
+    if not done[v] and newIdx < 30 then -- max 30 since this is untested code
       resultingStack[newIdx] = v
       newIdx = newIdx + 1
       done[v] = true
@@ -239,49 +93,100 @@ local function deleteFromStack(currentStack, toDelete)
   return resultingStack
 end
 
-local function renderMainWindowAt(app, windowLoc)
+local function setMainWindowFrame(app, frame)
   local win = app:mainWindow()
   if isEmpty(win) then
     return false
   end
-  win[windowLoc](win)
+  win:setFrame(frame)
   return true
 end
 
-local function renderAt(bundleID, windowLoc)
+local function renderFrameDelayed(bundleID, frame)
+  if isEmpty(bundleID) then
+    return
+  end
+
   local app = hs.application.open(bundleID)
-  local renderSuccess = renderMainWindowAt(app, windowLoc)
+  local renderSuccess = setMainWindowFrame(app, frame)
   if not renderSuccess then
-    hs.timer.doAfter(3, function()
-      renderMainWindowAt(app, windowLoc)
+    hs.timer.doAfter(4, function()
+      setMainWindowFrame(app, frame)
     end)
   end
 end
 
-local function render(stack)
-  if not isEmpty(stack[3]) then
-    renderAt(stack[3], 'shiftRight')
+local function hideWindow(bundleID)
+  if isEmpty(bundleID) then
+    return
   end
 
-  if not isEmpty(stack[2]) then
-    renderAt(stack[2], 'shiftLeft')
+  local app = hs.application.open(bundleID)
+  log.d(hs.inspect(app))
+  app:hide()
+end
+
+local function renderSingleCenter(stack, primaryWidthRatio)
+  local maxFrame = hs.mouse.getCurrentScreen():fullFrame()
+
+  local frames = singleCenterLayout(maxFrame, primaryWidthRatio)
+  renderFrameDelayed(stack[3], frames.s2)
+  renderFrameDelayed(stack[2], frames.s1)
+  renderFrameDelayed(stack[1], frames.primary)
+end
+
+local function renderDualCenter(stack, primaryWindowWidthRatio)
+  local maxFrame = hs.mouse.getCurrentScreen():fullFrame()
+
+  local frames = dualCenterLayout(maxFrame, primaryWindowWidthRatio)
+  renderFrameDelayed(stack[4], frames.s2)
+  renderFrameDelayed(stack[3], frames.s1)
+  renderFrameDelayed(stack[2], frames.p2)
+  renderFrameDelayed(stack[1], frames.p1)
+end
+
+local function renderFocusLayout(stack, maxWidth)
+  if isEmpty(stack[1]) then
+    return
   end
 
-  if not isEmpty(stack[1]) then
-    renderAt(stack[1], 'centerWithFullHeight')
+  for _, v in pairs(stack) do
+    hideWindow(v)
+  end
+
+  local maxFrame = hs.mouse.getCurrentScreen():fullFrame()
+  local frames = focusLayout(maxFrame, maxWidth)
+
+  renderFrameDelayed(stack[1], frames.p1)
+end
+
+local function render(stack, layout)
+  if layout == layouts.singleCenter then
+    renderSingleCenter(stack, layoutParams.singleCenter.primaryWindowWidthRatio)
+    return
+  end
+  if layout == layouts.dualCenter then
+    renderDualCenter(stack, layoutParams.dualCenter.primaryWindowWidthRatio)
+    return
+  end
+  if layout == layouts.focus then
+    renderFocusLayout(stack, layoutParams.focus.maxWidth)
   end
 end
 
-hs.urlevent.bind('windowModify', function(eventName, params)
-  local fw = hs.window.focusedWindow()
-  fw[params.fn](fw)
-end)
-
-local windowStack = {}
-
 hs.urlevent.bind('stackWindow', function(eventName, params)
   windowStack = newStack(windowStack, params.bundleID)
-  render(windowStack)
+  render(windowStack, currentLayout)
+end)
+
+hs.urlevent.bind('cycleLayout', function(eventName, params)
+  currentLayout = nextLayout()
+  render(windowStack, currentLayout)
+end)
+
+hs.urlevent.bind('changeLayout', function(eventName, params)
+  currentLayout = params.layoutName
+  render(windowStack, currentLayout)
 end)
 
 hs.urlevent.bind('quitApp', function(eventName, params)
@@ -294,5 +199,5 @@ function window.test(win)
   hs.application.launchOrFocusByBundleID('com.google.Chrome')
   local fw = hs.window.focusedWindow()
   -- fw['shiftLeft'](fw)
-  log.d('windowsafari', hs.inspect(fw))
+  log.d('windowsafari', hs.inspect(hs.screen.allScreens()))
 end
