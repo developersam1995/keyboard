@@ -25,24 +25,26 @@
 --------------------------------------------------------------------------------
 
 return {
-  modifiers = {'ctrl'},
+  modifiers = { 'ctrl' },
   showHelp  = false,
-  trigger   = 's',
+  trigger   = 'f',
   mappings  = {
-    { {},         'return', 'maximize' },
-    { {},         'space',  'centerWithFullHeight' },
-    { {},         'h',      'left' },
-    { {},         'j',      'down' },
-    { {},         'k',      'up' },
-    { {},         'l',      'right' },
-    { {'shift'},  'h',      'left40' },
-    { {'shift'},  'l',      'right60' },
-    { {},         'i',      'upLeft' },
-    { {},         'o',      'upRight' },
-    { {},         ',',      'downLeft' },
-    { {},         '.',      'downRight' },
-    { {},         'n',      'nextScreen' },
-    { {},         'right',  'moveOneScreenEast' },
-    { {},         'left',   'moveOneScreenWest' },
+    { {}, 'return', 'maximize', true },
+    { {}, 'space', 'centerWithFullHeight', false },
+    { {}, 'h', 'left', false },
+    { {}, 'j', 'down', false },
+    { {}, 'k', 'up', false },
+    { {}, 'l', 'right', false },
+    { { 'shift' }, 'h', 'left30', false },
+    { { 'shift' }, 'l', 'right70', false },
+    { {}, 'i', 'upLeft', false },
+    { {}, 'o', 'upRight', false },
+    { {}, ',', 'downLeft', false },
+    { {}, '.', 'downRight', false },
+    { {}, 'n', 'nextScreen', true },
+    { {}, 'right', 'moveOneScreenEast', false },
+    { {}, 'left', 'moveOneScreenWest', false },
+    { {}, 'c', 'centre' },
+    { {}, 'escape', 'noOp', true}
   }
 }

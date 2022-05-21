@@ -148,8 +148,8 @@ function window.centerWithFullHeight(win)
   local screen = win:screen()
   local max = screen:fullFrame()
 
-  f.x = max.x + (max.w / 5)
-  f.w = max.w * 3/5
+  f.x = max.x + (max.w * 5 / 18)
+  f.w = max.w * 4/9
   f.y = max.y
   f.h = max.h
   win:setFrame(f)
@@ -160,14 +160,14 @@ end
 -- | HERE |          |
 -- |      |          |
 -- +-----------------+
-function window.left40(win)
+function window.shiftLeft(win)
   local f = win:frame()
   local screen = win:screen()
   local max = screen:frame()
 
   f.x = max.x
   f.y = max.y
-  f.w = max.w * 0.4
+  f.w = max.w * (5/18)
   f.h = max.h
   win:setFrame(f)
 end
@@ -177,14 +177,14 @@ end
 -- |      |   HERE   |
 -- |      |          |
 -- +-----------------+
-function window.right60(win)
+function window.shiftRight(win)
   local f = win:frame()
   local screen = win:screen()
   local max = screen:frame()
 
-  f.x = max.x + (max.w * 0.4)
+  f.x = max.x + (max.w * 13/18)
   f.y = max.y
-  f.w = max.w * 0.6
+  f.w = max.w * (5/18)
   f.h = max.h
   win:setFrame(f)
 end
@@ -202,74 +202,108 @@ function window.nextScreen(win)
   end
 end
 
-windowLayoutMode = hs.hotkey.modal.new({}, 'F16')
-
-windowLayoutMode.entered = function()
-  windowLayoutMode.statusMessage:show()
-end
-windowLayoutMode.exited = function()
-  windowLayoutMode.statusMessage:hide()
+local function empty(s)
+  return s == nil or s == ''
 end
 
--- Bind the given key to call the given function and exit WindowLayout mode
-function windowLayoutMode.bindWithAutomaticExit(mode, modifiers, key, fn)
-  mode:bind(modifiers, key, function()
-    mode:exit()
-    fn()
-  end)
+
+local log = hs.logger.new('test.debugger', 'debug')
+
+local function renderMainWindowAt (app, windowLoc) 
+  local win = app:mainWindow()
+  if empty(win) then
+    return false
+  end
+  win[windowLoc](win)
+  return true
 end
 
-local status, windowMappings = pcall(require, 'keyboard.windows-bindings')
-
-if not status then
-  windowMappings = require('keyboard.windows-bindings-defaults')
+local function renderAt (bundleID, windowLoc) 
+  local app = hs.application.open(bundleID)
+  local renderSuccess = renderMainWindowAt(app, windowLoc)
+  if not renderSuccess then
+    hs.timer.doAfter(3, function ()
+      renderMainWindowAt(app, windowLoc)
+    end)
+  end
 end
 
-local modifiers = windowMappings.modifiers
-local showHelp  = windowMappings.showHelp
-local trigger   = windowMappings.trigger
-local mappings  = windowMappings.mappings
 
-function getModifiersStr(modifiers)
-  local modMap = { shift = '⇧', ctrl = '⌃', alt = '⌥', cmd = '⌘' }
-  local retVal = ''
-
-  for i, v in ipairs(modifiers) do
-    retVal = retVal .. modMap[v]
+local function renderLayout(stack)
+  if not empty(stack[3]) then
+    renderAt(stack[3], 'shiftRight')
   end
 
-  return retVal
+  if not empty(stack[2]) then
+    renderAt(stack[2], 'shiftLeft')
+  end
+
+  if not empty(stack[1])then
+    renderAt(stack[1], 'centerWithFullHeight')
+  end
 end
 
-local msgStr = getModifiersStr(modifiers)
-msgStr = 'Window Layout Mode (' .. msgStr .. (string.len(msgStr) > 0 and '+' or '') .. trigger .. ')'
+local function newStack(currentStack, top)
+  local resultingStack = {}
+  local done = {}
 
-for i, mapping in ipairs(mappings) do
-  local modifiers, trigger, winFunction = table.unpack(mapping)
-  local hotKeyStr = getModifiersStr(modifiers)
+  resultingStack[1] = top 
 
-  if showHelp == true then
-    if string.len(hotKeyStr) > 0 then
-      msgStr = msgStr .. (string.format('\n%10s+%s => %s', hotKeyStr, trigger, winFunction))
-    else
-      msgStr = msgStr .. (string.format('\n%11s => %s', trigger, winFunction))
+  done[top] = true
+  local newIdx = 2
+
+  for _, v in pairs(currentStack)
+  do
+    if not done[v] and newIdx < 5 then
+      resultingStack[newIdx] = v
+      newIdx = newIdx + 1
+      done[v] = true
     end
   end
-
-  windowLayoutMode:bindWithAutomaticExit(modifiers, trigger, function()
-    --example: hs.window.focusedWindow():upRight()
-    local fw = hs.window.focusedWindow()
-    fw[winFunction](fw)
-  end)
+  return resultingStack
 end
 
-local message = require('keyboard.status-message')
-windowLayoutMode.statusMessage = message.new(msgStr)
+local function deleteFromStack(currentStack, toDelete)
+  local resultingStack = {}
+  local idx = 0
+  for _, v in pairs(currentStack)
+  do
+    if not v == toDelete then
+      resultingStack[idx] = v 
+      idx = idx + 1
+    end 
+  end
+  return resultingStack
+end
 
--- Use modifiers+trigger to toggle WindowLayout Mode
-hs.hotkey.bind(modifiers, trigger, function()
-  windowLayoutMode:enter()
+
+
+hs.urlevent.bind('windowModify', function (eventName, params)
+  local fw = hs.window.focusedWindow()
+  fw[params.fn](fw) 
 end)
-windowLayoutMode:bind(modifiers, trigger, function()
-  windowLayoutMode:exit()
+
+local windowStack = {}
+
+hs.urlevent.bind('stackWindow', function (eventName, params)
+  windowStack = newStack(windowStack, params.bundleID)
+  renderLayout(windowStack)
 end)
+
+hs.urlevent.bind('quitApp', function (eventName, params)
+  local frontMost = hs.application.frontmostApplication()
+  windowStack = deleteFromStack(windowStack, frontMost:bundleID())
+  frontMost:kill()
+end)
+
+hs.urlevent.bind('quitFocusedWindow', function (eventName, params)
+  windowStack = newStack(windowStack, params.bundleID)
+  renderLayout(windowStack)
+end)
+
+function window.test(win)
+  hs.application.launchOrFocusByBundleID('com.google.Chrome')
+  local fw = hs.window.focusedWindow()
+  -- fw['shiftLeft'](fw) 
+  log.d('windowsafari',hs.inspect(fw))
+end

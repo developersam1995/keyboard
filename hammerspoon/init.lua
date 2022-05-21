@@ -37,10 +37,28 @@ enableHotkeyForWindowsMatchingFilter = function(windowFilter, hotkey)
 end
 
 -- require('keyboard.control-escape')
--- require('keyboard.delete-words')
+require('keyboard.delete-words')
 -- require('keyboard.hyper')
 -- require('keyboard.markdown')
 -- require('keyboard.panes')
--- require('keyboard.windows')
+require('keyboard.windows')
+-- require('keyboard.super')
+
+-- local hyper = {"ctrl", "alt", "cmd", "shift"}
+
+-- hs.loadSpoon("MiroWindowsManager")
+
+-- hs.window.animationDuration = 0.3
+-- spoon.MiroWindowsManager:bindHotkeys({
+--   up = {hyper, "up"},
+--   right = {hyper, "right"},
+--   down = {hyper, "down"},
+--   left = {hyper, "left"},
+--   fullscreen = {hyper, "f"},
+--   nextscreen = {hyper, "n"}
+-- })
+
+-- require('keyboard.sd-mode')
 
 hs.notify.new({title='Hammerspoon', informativeText='Ready to rock 🤘'}):send()
+
