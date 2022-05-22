@@ -3,7 +3,7 @@ window = hs.getObjectMetatable("hs.window")
 
 local log = hs.logger.new('test.debugger', 'debug')
 
-local layoutParams = require('keyboard.layout-params-defaults')
+local lp = require('keyboard.layout-params-defaults')
 local windowStack = {}
 
 local layouts = {
@@ -11,6 +11,14 @@ local layouts = {
   dualCenter = "dual-center",
   focus = "focus"
 }
+
+local layoutParams = {
+  singleCenter = lp.singleCenter,
+  dualCenter = lp.dualCenter,
+  focus = lp.focus
+}
+
+local focusModeToggle = false
 
 local currentLayout = layouts.singleCenter
 local nextLayout = hs.fnutils.cycle({ layouts.dualCenter, layouts.singleCenter })
@@ -123,7 +131,8 @@ local function hideWindow(bundleID)
 
   local app = hs.application.open(bundleID)
   log.d(hs.inspect(app))
-  app:hide()
+  local r = app:hide()
+  log.d('return', r)
 end
 
 local function renderSingleCenter(stack, primaryWidthRatio)
@@ -161,6 +170,10 @@ local function renderFocusLayout(stack, maxWidth)
 end
 
 local function render(stack, layout)
+  if focusModeToggle then
+    renderFocusLayout(stack, layoutParams.focus.maxWidth)
+    return
+  end
   if layout == layouts.singleCenter then
     renderSingleCenter(stack, layoutParams.singleCenter.primaryWindowWidthRatio)
     return
@@ -168,9 +181,6 @@ local function render(stack, layout)
   if layout == layouts.dualCenter then
     renderDualCenter(stack, layoutParams.dualCenter.primaryWindowWidthRatio)
     return
-  end
-  if layout == layouts.focus then
-    renderFocusLayout(stack, layoutParams.focus.maxWidth)
   end
 end
 
@@ -184,8 +194,9 @@ hs.urlevent.bind('cycleLayout', function(eventName, params)
   render(windowStack, currentLayout)
 end)
 
+-- currently only supporting foucusLayout
 hs.urlevent.bind('changeLayout', function(eventName, params)
-  currentLayout = params.layoutName
+  focusModeToggle = not focusModeToggle
   render(windowStack, currentLayout)
 end)
 
@@ -193,6 +204,38 @@ hs.urlevent.bind('quitApp', function(eventName, params)
   local frontMost = hs.application.frontmostApplication()
   windowStack = deleteFromStack(windowStack, frontMost:bundleID())
   frontMost:kill()
+end)
+
+hs.urlevent.bind('focusWindow', function (eventName, params)
+  local fw = hs.window.focusedWindow()
+  local f = params.f
+  if f == 'up' then
+    fw:focusWindowNorth(nil, true, true)
+  end
+  if f == 'down'then
+    fw:focusWindowSouth(nil, true, true)
+  end
+  if f == 'right' then
+    fw:focusWindowEast(nil, true, true)
+  end
+  if f == 'left' then
+    local r = fw:focusWindowWest(nil, true, true)
+  end
+end)
+
+hs.urlevent.bind('sizeLayout', function (eventName, params)
+  local type = params.type
+  if type == 'increment' then
+    layoutParams.dualCenter.primaryWindowWidthRatio = layoutParams.dualCenter.primaryWindowWidthRatio + 0.05
+    layoutParams.singleCenter.primaryWindowWidthRatio = layoutParams.singleCenter.primaryWindowWidthRatio + 0.05
+    layoutParams.focus.maxWidth = layoutParams.focus.maxWidth + 100
+  end
+  if type == 'decrement' then
+    layoutParams.dualCenter.primaryWindowWidthRatio = layoutParams.dualCenter.primaryWindowWidthRatio - 0.05
+    layoutParams.singleCenter.primaryWindowWidthRatio = layoutParams.singleCenter.primaryWindowWidthRatio - 0.05
+    layoutParams.focus.maxWidth = layoutParams.focus.maxWidth - 100 
+  end
+  render(windowStack, currentLayout)
 end)
 
 function window.test(win)
