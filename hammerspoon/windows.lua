@@ -124,17 +124,6 @@ local function renderFrameDelayed(bundleID, frame)
   end
 end
 
-local function hideWindow(bundleID)
-  if isEmpty(bundleID) then
-    return
-  end
-
-  local app = hs.application.open(bundleID)
-  log.d(hs.inspect(app))
-  local r = app:hide()
-  log.d('return', r)
-end
-
 local function renderSingleCenter(stack, primaryWidthRatio)
   local maxFrame = hs.mouse.getCurrentScreen():fullFrame()
 
@@ -155,16 +144,13 @@ local function renderDualCenter(stack, primaryWindowWidthRatio)
 end
 
 local function renderFocusLayout(stack, maxWidth)
-  if isEmpty(stack[1]) then
-    return
-  end
-
-  for _, v in pairs(stack) do
-    hideWindow(v)
-  end
-
   local maxFrame = hs.mouse.getCurrentScreen():fullFrame()
   local frames = focusLayout(maxFrame, maxWidth)
+
+  for i = #stack, 1, -1 do
+    local v = stack[i]
+    renderFrameDelayed(v, frames.p1)
+  end
 
   renderFrameDelayed(stack[1], frames.p1)
 end
