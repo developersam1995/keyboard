@@ -176,6 +176,7 @@ hs.urlevent.bind('stackWindow', function(eventName, params)
 end)
 
 hs.urlevent.bind('cycleLayout', function(eventName, params)
+  focusModeToggle = false
   currentLayout = nextLayout()
   render(windowStack, currentLayout)
 end)
@@ -212,14 +213,14 @@ end)
 hs.urlevent.bind('sizeLayout', function (eventName, params)
   local type = params.type
   if type == 'increment' then
-    layoutParams.dualCenter.primaryWindowWidthRatio = layoutParams.dualCenter.primaryWindowWidthRatio + 0.05
-    layoutParams.singleCenter.primaryWindowWidthRatio = layoutParams.singleCenter.primaryWindowWidthRatio + 0.05
-    layoutParams.focus.maxWidth = layoutParams.focus.maxWidth + 100
+    layoutParams.dualCenter.primaryWindowWidthRatio = layoutParams.dualCenter.primaryWindowWidthRatio + 0.03
+    layoutParams.singleCenter.primaryWindowWidthRatio = layoutParams.singleCenter.primaryWindowWidthRatio + 0.03
+    layoutParams.focus.maxWidth = layoutParams.focus.maxWidth + 50
   end
   if type == 'decrement' then
-    layoutParams.dualCenter.primaryWindowWidthRatio = layoutParams.dualCenter.primaryWindowWidthRatio - 0.05
-    layoutParams.singleCenter.primaryWindowWidthRatio = layoutParams.singleCenter.primaryWindowWidthRatio - 0.05
-    layoutParams.focus.maxWidth = layoutParams.focus.maxWidth - 100 
+    layoutParams.dualCenter.primaryWindowWidthRatio = layoutParams.dualCenter.primaryWindowWidthRatio - 0.03
+    layoutParams.singleCenter.primaryWindowWidthRatio = layoutParams.singleCenter.primaryWindowWidthRatio - 0.03
+    layoutParams.focus.maxWidth = layoutParams.focus.maxWidth - 50 
   end
   render(windowStack, currentLayout)
 end)
